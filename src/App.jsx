@@ -1,7 +1,7 @@
-
 import { useState } from "react";
 import "./App.css";
-
+import { NavLink } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 function App() {
   const [cartItem, setCartItem] = useState([]);
 
@@ -80,10 +80,8 @@ function App() {
     if (existingItem) {
       setCartItem(
         cartItem.map((cart) =>
-          cart.id === item.id
-            ? { ...cart, qty: cart.qty + 1 }
-            : cart
-        )
+          cart.id === item.id ? { ...cart, qty: cart.qty + 1 } : cart,
+        ),
       );
     } else {
       setCartItem([...cartItem, { ...item, qty: 1 }]);
@@ -93,29 +91,20 @@ function App() {
   function increaseQty(id) {
     setCartItem(
       cartItem.map((item) =>
-        item.id === id
-          ? { ...item, qty: item.qty + 1 }
-          : item
-      )
+        item.id === id ? { ...item, qty: item.qty + 1 } : item,
+      ),
     );
   }
 
   function decreaseQty(id) {
     setCartItem(
       cartItem
-        .map((item) =>
-          item.id === id
-            ? { ...item, qty: item.qty - 1 }
-            : item
-        )
-        .filter((item) => item.qty > 0)
+        .map((item) => (item.id === id ? { ...item, qty: item.qty - 1 } : item))
+        .filter((item) => item.qty > 0),
     );
   }
 
-  const total = cartItem.reduce(
-    (sum, item) => sum + item.price * item.qty,
-    0
-  );
+  const total = cartItem.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   return (
     <div className="h-screen">
@@ -140,41 +129,19 @@ function App() {
       </div>
 
       <div className="w-full h-[calc(100vh-80px)] flex">
-        <div className="border max-h-full gap-10 p-10 overflow-auto w-full grid grid-cols-3 place-items-center">
-          {appItem.map((item) => (
-            <div key={item.id} className="w-60 h-100 rounded-2xl">
-              <img
-                className="rounded-t-2xl h-60 w-full object-cover"
-                src={item.image}
-                alt={item.name}
-              />
+       <Outlet
+       context={{
+              appItem,
+              addCartItem,
+            }}
+       />
 
-              <div className="rounded-b-2xl bg-amber-200 h-40 w-full flex flex-col justify-between items-start gap-2 p-4">
-                <p className="font-semibold">{item.name}</p>
-
-                <p className="text-gray-500 font-semibold text-xl">
-                  ${item.price}
-                </p>
-
-                <button
-                  onClick={() => addCartItem(item)}
-                  className="border py-1 px-4 rounded-3xl hover:bg-black hover:text-white transition-transform duration-300 ease-in"
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="w-160 border-2">
+        <div className="w-160  border-red-500 border-2">
           <div className="h-20 border flex justify-start items-center p-10">
-            <p className="text-xl font-bold">
-              Cart ({cartItem.length})
-            </p>
+            <p className="text-xl font-bold">Cart ({cartItem.length})</p>
           </div>
 
-          <div className="border h-100 overflow-auto p-4">
+          <div className="border h-80 overflow-auto p-4">
             {cartItem.length === 0 ? (
               <div className="h-full flex justify-center items-center">
                 <p className="text-gray-500">Cart is empty</p>
@@ -194,9 +161,7 @@ function App() {
                   <div className="flex-1">
                     <p className="font-semibold">{item.name}</p>
 
-                    <p className="text-gray-500">
-                      ${item.price}
-                    </p>
+                    <p className="text-gray-500">${item.price}</p>
 
                     <div className="flex items-center gap-3 mt-2">
                       <button
@@ -217,9 +182,7 @@ function App() {
                     </div>
                   </div>
 
-                  <p className="font-semibold">
-                    ${item.price * item.qty}
-                  </p>
+                  <p className="font-semibold">${item.price * item.qty}</p>
                 </div>
               ))
             )}
@@ -227,12 +190,11 @@ function App() {
           <div className="h-10 flex justify-between items-center px-6">
             <p className="text-xl font-bold">Total</p>
 
-            <p className="text-xl font-bold">
-              ${total}
-            </p>
+            <p className="text-xl font-bold">${total}</p>
           </div>
-
-          
+          <div className="flex justify-center items-center ">
+            <NavLink to='/payment'><button class="rounded-3xl bg-yellow-200 py-1 px-4">Proceed to Payment</button></NavLink>
+          </div>
         </div>
       </div>
     </div>
@@ -240,4 +202,3 @@ function App() {
 }
 
 export default App;
-
